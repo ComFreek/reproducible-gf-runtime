@@ -17,7 +17,6 @@ fi
 
 # BUILD C RUNTIME
 # =========================
-
 cd "$GF_LOCAL_REPO/src/runtime/c"
 
 autoreconf -i
@@ -56,11 +55,15 @@ sudo ln -sf $JAVA_SYMLINK_SRC $JAVA_SYMLINK_DEST
 # To overcome $(LIBTOOL) in the Java Makefile to always choose
 # the default gcc binary to link even when the command is
 # "$(LIBTOOL) --mode=link x86_64-w64-mingw32-gcc-win32 ..."
+#
+# (This could be fixed by actually creating a ./configure build
+#  chain - which accepts --host and --build - instead of just using
+#  the (/an once auto-generated?) Makefile with libtool.)
 rm -rf fake_gcc
 mkdir -p fake_gcc
 ln -s "$(which x86_64-w64-mingw32-gcc-win32)" fake_gcc/gcc
 export _GF_BUILD_PATH_BACKUP=$PATH
-export PATH=fake_gcc:$PATH
+export PATH=$GF_LOCAL_REPO/src/runtime/java/fake_gcc:$PATH
 
 export CFLAGS=-I../c
 make
@@ -70,6 +73,13 @@ unset _GF_BUILD_PATH_BACKUP
 
 # COPY OUTPUT FILES
 # =========================
-# TODO: needs fixing, maybe too few libraries copied!
-cp jpgf.jar "$OUTPUT_DIR"
-cp .libs/libjpgf.so.0.0.0 "$OUTPUT_DIR/libjpgf.dll"
+cd "$GF_LOCAL_REPO/src/runtime/c/.libs"
+cp * "$OUTPUT_DIR"
+cp "$GF_LOCAL_REPO/src/runtime/java/jpgf.jar" "$OUTPUT_DIR"
+cd "$GF_LOCAL_REPO/src/runtime/java/.libs"
+
+# As mentioned above, the Java Makefile is ill-configured
+# and always produces *.so binaries even though they contain
+# Windows DLL content => Simply rename them.
+cp libjpgf.so.0.0.0 "$OUTPUT_DIR/jpgf.dll"
+cp * "$OUTPUT_DIR"
