@@ -1,6 +1,29 @@
+/**
+ * Relevant for the Windows build only.
+ *
+ * First, see the comment at https://github.com/GrammaticalFramework/GF/issues/22.
+ * This file gets automatically #included by build-win.sh in
+ *   "[GF repo as cloned in build-win.sh]/src/runtime/c/sg/sg.c"
+ *
+ * The contents of this file have been copied together from the SQLite 3.21.0
+ * amalgamation:
+ *  - https://www.sqlite.org/download.html
+ *  - https://www.sqlite.org/2017/sqlite-amalgamation-3210000.zip
+ *
+ * The hacky approach was as follows:
+ *   1. For every undefined reference error, copy the method from
+ *      the amalgamation file into this file.
+ *   2. For every new error of calling an unknown function, copy that
+ *      method from the amalgamation file again into this file.
+ *   3. Repeat.
+ *
+ * Some minor modifications have also been made, e.g. calls to sqlite3Atoi have been
+ * replaced by calls to atoi.
+ */
+
 #include <ctype.h>
 
-# define sqlite3Isdigit(x)   isdigit((unsigned char)(x))
+#define sqlite3Isdigit(x)   isdigit((unsigned char)(x))
 #define sqlite3StrNICmp sqlite3_strnicmp
 #define UpperToLower sqlite3UpperToLower
 #define ArraySize(X)    ((int)(sizeof(X)/sizeof(X[0])))
