@@ -14,3 +14,4 @@ apt-get install -y unzip
 
 # For the Java bindings: https://github.com/GrammaticalFramework/GF/blob/master/src/runtime/java/INSTALL
 apt-get install -y openjdk-8-jdk
+apt-get install libtool-bin
